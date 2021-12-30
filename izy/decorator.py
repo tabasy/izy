@@ -7,7 +7,7 @@ from collections import namedtuple
 from datetime import datetime
 
 
-__all__ = ['returns', 'yields', 'fix_this', 'ignors', 'fallsback', 'timed', 'logs']
+__all__ = ['returns', 'yields', 'fix_this', 'ignores', 'fallsback', 'returns_time', 'logs']
 
 
 def returns(*field_names, type_name=None):

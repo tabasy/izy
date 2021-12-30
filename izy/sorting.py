@@ -4,7 +4,8 @@ import heapq
 
 __all__ = ['ascending', 'descending', 'topk', 
            'argtopk', 'argsort', 'argsorted',
-           'argmin', 'argmaseq', 'reorder']
+           'argmin', 'argmax', 'reorder']
+
 
 def ascending(x):
     return sorted(x, reverse=False)
