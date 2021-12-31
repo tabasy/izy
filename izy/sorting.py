@@ -51,32 +51,32 @@ if __name__ == '__main__':
 
     mylist = [4, 10, -8, 0, 4, 33, 6, 97, 1, 6., 41, -6, 0.0]
 
-    print(f'{mylist = }\n')
-    print(f'{topk(mylist, 4) = }')
-    print(f'{topk(mylist, -3) = }\n')
+    # print(f'{mylist = }\n')
+    # print(f'{topk(mylist, 4) = }')
+    # print(f'{topk(mylist, -3) = }\n')
     
-    print(f'{argmax(mylist) = }')
-    print(f'{argmin(mylist) = }\n')
+    # print(f'{argmax(mylist) = }')
+    # print(f'{argmin(mylist) = }\n')
     
-    print(f'{argsort(mylist) = }')
-    print(f'{argsort(mylist, reverse=True) = }\n')
+    # print(f'{argsort(mylist) = }')
+    # print(f'{argsort(mylist, reverse=True) = }\n')
 
-    print(f'{argtopk(mylist, 3) = }')
-    print(f'{argtopk(mylist, 4, reverse=True) = }\n')
+    # print(f'{argtopk(mylist, 3) = }')
+    # print(f'{argtopk(mylist, 4, reverse=True) = }\n')
 
-    print(f'{ascending(mylist) = }')
-    print(f'{descending(mylist) = }\n')
+    # print(f'{ascending(mylist) = }')
+    # print(f'{descending(mylist) = }\n')
 
-    print(f'{reorder(mylist, argsort(mylist)) = }\n')
+    # print(f'{reorder(mylist, argsort(mylist)) = }\n')
 
-    mydict = {'a': 1, 'b': 4, 'c': -1}
+    # mydict = {'a': 1, 'b': 4, 'c': -1}
 
-    print('\nfor dicts, keys are considered as indices:')
-    print(f'{mydict = }\n')
+    # print('\nfor dicts, keys are considered as indices:')
+    # print(f'{mydict = }\n')
     
-    print(f'{argmin(mydict) = }\n')
-    print(f'{argmax(mydict) = }\n')
-    print(f'{argsort(mydict) = }\n')
-    print(f'{reorder(mydict, argsort(mydict)) = }')
+    # print(f'{argmin(mydict) = }\n')
+    # print(f'{argmax(mydict) = }\n')
+    # print(f'{argsort(mydict) = }\n')
+    # print(f'{reorder(mydict, argsort(mydict)) = }')
 
 

@@ -14,9 +14,9 @@ def returns(*field_names, type_name=None):
     def decorator(f):
         if type_name is None:
             # print(f.__name__, list(field_names))
-            ReturnClass = namedtuple(f.__name__ + '_output', field_names)
+            FuncOutput = namedtuple(f.__name__ + '_output', field_names)
         else:
-            ReturnClass = namedtuple(type_name, field_names)
+            FuncOutput = namedtuple(type_name, field_names)
 
         # type_name = type_name or f.__name__
 
@@ -24,11 +24,11 @@ def returns(*field_names, type_name=None):
         def wrapper(*args, **kw):
             result = f(*args, **kw)
             if isinstance(result, Mapping):
-                return ReturnClass(**result)
+                return FuncOutput(**result)
             elif isinstance(result, tuple):
-                return ReturnClass(*result)
+                return FuncOutput(*result)
             else:
-                return ReturnClass(result)
+                return FuncOutput(result)
         
         return wrapper
     return decorator
@@ -38,19 +38,19 @@ def yields(*field_names, type_name=None):
     def decorator(f):
         if type_name is None:
             # print(f.__name__, list(field_names))
-            ReturnClass = namedtuple(f.__name__ + '_output', field_names)
+            FuncOutput = namedtuple(f.__name__ + '_output', field_names)
         else:
-            ReturnClass = namedtuple(type_name, field_names)
+            FuncOutput = namedtuple(type_name, field_names)
 
         @functools.wraps(f)
         def wrapper(*args, **kw):
             for item in f(*args, **kw):
                 if isinstance(item, Mapping):
-                    yield ReturnClass(**item)
+                    yield FuncOutput(**item)
                 elif isinstance(item, tuple):
-                    yield ReturnClass(*item)
+                    yield FuncOutput(*item)
                 else:
-                    yield ReturnClass(item)
+                    yield FuncOutput(item)
         
         return wrapper
     return decorator
@@ -94,7 +94,7 @@ def logs(logger=None, to_file=None, file_mode='w',
                 result = f(*args, **kw)
                 t_after = datetime.now()
                 if after:
-                    mylogger.log(after, f"Function `{f.__name__}` returned after {str(t_after-t_before)} with result: {result}")
+                    mylogger.log(after, f"Function `{f.__name__}` returned after {str(t_after-t_before)} with output: {result}")
                 return result
             except Exception as e:
                 t_exception = datetime.now()
@@ -108,7 +108,7 @@ def logs(logger=None, to_file=None, file_mode='w',
 def returns_time(milis=False, seconds=False):    # defaults to timedelta format
 
     def decorator(f):
-        ReturnClass = namedtuple(f.__name__ + '_output', ('result', 'time'))
+        FuncOutput = namedtuple(f.__name__ + '_output', ('output', 'time'))
 
         @functools.wraps(f)
         def wrapper(*args, **kw):
@@ -120,7 +120,7 @@ def returns_time(milis=False, seconds=False):    # defaults to timedelta format
             elif milis:
                 t_delta = int(t_delta.total_seconds() * 1000)
 
-            return ReturnClass(result, t_delta)
+            return FuncOutput(result, t_delta)
 
         return wrapper
     return decorator
@@ -195,77 +195,78 @@ if __name__ == '__main__':
     def please(x):
         print('ValueError')
 
-    @ignores(ValueError, IndexError)
-    def ignorer(x):
-        for i in range(x):
-            raise ValueError
+    # @ignores(ValueError, IndexError)
+    # def ignorer(x):
+    #     for i in range(x):
+    #         raise ValueError
 
-    @ignores(ValueError, IndexError)
-    @logs()
-    def cannot_ignore(x):
-        for i in range(x):
-            raise ZeroDivisionError
+    # @ignores(ValueError, IndexError)
+    # @logs()
+    # def cannot_ignore(x):
+    #     for i in range(x):
+    #         raise ZeroDivisionError
 
-    @fallsback(ValueError, 2)
-    def fall2value(x):
-        raise ValueError
+    # @fallsback(ValueError, 2)
+    # def fall2value(x):
+    #     raise ValueError
 
-    @fallsback(ValueError, lambda x: x**2)
-    def fall2callable(x):
-        raise ValueError
+    # @fallsback(ValueError, lambda x: x**2)
+    # def fall2callable(x):
+    #     raise ValueError
 
-    @fallsback(ZeroDivisionError, 1)
-    @fallsback(ValueError, lambda x: x**2)
-    def multifall2callable(x):
-        if x < 0:
-            raise ValueError
-        else:
-            raise ZeroDivisionError
+    # @fallsback(ZeroDivisionError, 1)
+    # @fallsback(ValueError, lambda x: x**2)
+    # def multifall2callable(x):
+    #     if x < 0:
+    #         raise ValueError
+    #     else:
+    #         raise ZeroDivisionError
 
-    @returns_time()
-    def mytimed(x):
-        z = 0
-        for i in range(x * 1000000):
-            z += i
+    # @returns_time()
+    # def mytimed(x):
+    #     z = 0
+    #     for i in range(x * 1000000):
+    #         z += i
 
-    @returns_time(seconds=True)
-    def mytimed_seconds(x):
-        z = 0
-        for i in range(x * 1000000):
-            z += i
+    # @returns_time(seconds=True)
+    # def mytimed_seconds(x):
+    #     z = 0
+    #     for i in range(x * 1000000):
+    #         z += i
 
-    @returns('output', 'milis')
-    @returns_time(milis=True)
-    def mytimed_milis(x):
-        z = 0
-        for i in range(x * 1000000):
-            z += i
+    # @returns('output', 'milis')
+    # @returns_time(milis=True)
+    # def mytimed_milis(x):
+    #     z = 0
+    #     for i in range(x * 1000000):
+    #         z += i
 
-    @fallsback(ValueError, 0)
-    @logs(before=logging.WARN, after=logging.WARN)
-    def logged(x, **kw):
-        for i in range(1000000):
-            x += i
-        # raise ValueError
+    # @fallsback(ValueError, 0)
+    # @logs(before=logging.WARN, after=logging.WARN)
+    # @logs(before=logging.DEBUG, after=logging.INFO, to_file='logged.log')
+    # def logged(x, **kw):
+    #     for i in range(1000000):
+    #         x += i
+    #     raise ValueError
 
-    print('\nnamed tuple outputs:\n')
-    print(f'{myfunction(4) = }\n')
-    print(f'{list(mygenerator(2)) = }\n')
+    # print('\nnamed tuple outputs:\n')
+    # print(f'{myfunction(4) = }\n')
+    # print(f'{list(mygenerator(2)) = }\n')
 
-    print('\nlogging:\n')
-    print(f'{logged(4, key1=5, key2=7.2) = }\n')
+    # print('\nlogging:\n')
+    # print(f'{logged(4, key1=5, key2=7.2) = }\n')
 
-    print('\ntiming:\n')
-    print(f'{mytimed(16) = }')
-    print(f'{mytimed(64) = }')
-    print(f'{mytimed_seconds(16) = }')
-    print(f'{mytimed_milis(32) = }')
+    # print('\ntiming:\n')
+    # print(f'{mytimed(16) = }')
+    # print(f'{mytimed(64) = }')
+    # print(f'{mytimed_seconds(16) = }')
+    # print(f'{mytimed_milis(32) = }')
 
-    print('\nexception handlers:\n')
-    print(f'{please(5) = }\n')                  # raises warning
-    print(f'{ignorer(5) = }\n')
-    # print(f'{cannot_ignore(5) = }\n')         # raises ZeroDivisionError
-    print(f'{fall2value(5) = }\n')           
-    print(f'{fall2callable(5) = }\n')           # pylance thinks its unreachable :)
-    print(f'{multifall2callable(0) = }\n')       
-    print(f'{multifall2callable(-2) = }\n')       
+    # print('\nexception handlers:\n')
+    # print(f'{please(5) = }\n')                  # raises warning
+    # print(f'{ignorer(5) = }\n')
+    # # print(f'{cannot_ignore(5) = }\n')         # raises ZeroDivisionError
+    # print(f'{fall2value(5) = }\n')           
+    # print(f'{fall2callable(5) = }\n')           # pylance thinks its unreachable :)
+    # print(f'{multifall2callable(0) = }\n')       
+    # print(f'{multifall2callable(-2) = }\n')       
