@@ -49,8 +49,8 @@ If you have a `dict` (or more precisely a `Mapping`), the `arg*` functions take 
 >>> argmin(mydict)
 'c'
 
->>> reorder(mydict, argsort(mydict))    # sorry it cannot return a sorted dict :) maybe an OrderedDict in the future...
-[-1, 1, 4]
+>>> reorder(mydict, argsort(mydict))    # sorry it cannot return a sorted dict :) 
+[-1, 1, 4]                              # maybe an OrderedDict in the future...
 ```
 
 ## Scorer
@@ -170,11 +170,11 @@ timed_output(result=None, time=datetime.timedelta(seconds=2, microseconds=530048
 timed_milis_output(output='done', milis=1289)
 ```
 
-`@logs()` does what it says at three stages: before calling, after returning and on exceptions. You can pass it your `logger` and control logs
+`@logs()` does what it says at three stages: before calling, after returning and on exceptions. You can control log level for each stage, log `to_file` using default logger (named after the function) or pass your own `logging.Logger`.
 
 ```python
 
-@logs(before=logging.DEBUG, after=logging.INFO)
+@logs(before=logging.DEBUG, after=logging.INFO, to_file='logged.log')
 def logged(x, **kw):
     for i in range(1000000):
         x += i
@@ -185,7 +185,7 @@ def logged(x, **kw):
 [2021-12-31 08:56:33][logged][INFO] - Function `logged` returned after 0:00:00.029084 with result: None
 ```
 
-`@fix_this()` reminds you to fix something stronger than a passive comment. It raises `UserWarning` at runtime and does this everytime :)
+`@fix_this()` reminds you to fix something in stronger way than a passive comment. It raises `UserWarning` at runtime and does this everytime :)
 ```python
 @fix_this('It always prints ValueError, errors should be raised!')
 def please(x):
