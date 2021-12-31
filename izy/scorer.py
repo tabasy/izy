@@ -251,9 +251,8 @@ class Scorer(dict):
 
 if __name__ == '__main__':
 
-    c = Scorer('abcde', '01234')
-    c['f'] = -5
-    d = Scorer('bcdefg', '651423')
+    c = Scorer('abcd', [1, 2, 5, 3])
+    d = Scorer('abc', [-2, 3, 4])
 
     print(f'{c = }')
     print(f'{d = }\n')
@@ -280,3 +279,9 @@ if __name__ == '__main__':
     print(f'{c - 2 = }')
     print(f'{c * 3 = }')
     print(f'{round(c / 4, 0) = }\n')
+
+    print(c.best())
+    print(c.topk(3))
+    print(c.topk(-2))
+    print(c.ascending())
+    print(c.median())
