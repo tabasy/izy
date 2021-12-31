@@ -14,7 +14,7 @@ def returns(*field_names, type_name=None):
     def decorator(f):
         if type_name is None:
             # print(f.__name__, list(field_names))
-            ReturnClass = namedtuple(f.__name__ + '_result', field_names)
+            ReturnClass = namedtuple(f.__name__ + '_output', field_names)
         else:
             ReturnClass = namedtuple(type_name, field_names)
 
@@ -38,7 +38,7 @@ def yields(*field_names, type_name=None):
     def decorator(f):
         if type_name is None:
             # print(f.__name__, list(field_names))
-            ReturnClass = namedtuple(f.__name__ + '_result', field_names)
+            ReturnClass = namedtuple(f.__name__ + '_output', field_names)
         else:
             ReturnClass = namedtuple(type_name, field_names)
 
@@ -108,7 +108,7 @@ def logs(logger=None, to_file=None, file_mode='w',
 def returns_time(milis=False, seconds=False):    # defaults to timedelta format
 
     def decorator(f):
-        ReturnClass = namedtuple(f.__name__ + '_result', ('result', 'time'))
+        ReturnClass = namedtuple(f.__name__ + '_output', ('result', 'time'))
 
         @functools.wraps(f)
         def wrapper(*args, **kw):
@@ -242,18 +242,18 @@ if __name__ == '__main__':
             z += i
 
     @fallsback(ValueError, 0)
-    @logs(before=logging.WARN)
+    @logs(before=logging.WARN, after=logging.WARN)
     def logged(x, **kw):
         for i in range(1000000):
             x += i
-        raise ValueError
+        # raise ValueError
 
     print('\nnamed tuple outputs:\n')
     print(f'{myfunction(4) = }\n')
     print(f'{list(mygenerator(2)) = }\n')
 
     print('\nlogging:\n')
-    # print(f'{logged(4, key1=5, key2=7.2) = }\n')
+    print(f'{logged(4, key1=5, key2=7.2) = }\n')
 
     print('\ntiming:\n')
     print(f'{mytimed(16) = }')

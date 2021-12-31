@@ -163,10 +163,10 @@ def timed_milis(x):
     return 'done'
 
 >>> timed(64)
-timed_result(result=None, time=datetime.timedelta(seconds=2, microseconds=530048))
+timed_output(result=None, time=datetime.timedelta(seconds=2, microseconds=530048))
 
 >>> timed_milis(32)
-timed_milis_result(output='done', milis=1289)
+timed_milis_output(output='done', milis=1289)
 ```
 
 `@logs()` does what it says at three stages: before calling, after returning and on exceptions. You can pass it your `logger` and control logs
