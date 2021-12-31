@@ -33,7 +33,8 @@ Let us have a big list of numbers and give it an `izy` try:
 >>> argsort(mylist, reverse=True)
 [7, 10, 5, 1, 6, 9, 0, 4, 8, 3, 12, 11, 2]
 
->>> descending(mylist)   # I like it more than sorted(x, reversed=True)
+>>> descending(mylist)   # I like it more than sorted(x, reverse=True)
+[97, 41, 33, 10, 6, 6.0, 4.2, 4, 1, 0, 0.0, -6, -8]
 
 >>> reorder(mylist, argsort(mylist))    # like numpy array indexing
 [-8, -6, 0, 0.0, 1, 4, 4.2, 6, 6.0, 10, 33, 41, 97]
