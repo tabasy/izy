@@ -40,7 +40,6 @@ Let us have a big list of numbers and give it an `izy` try:
 [-8, -6, 0, 0.0, 1, 4, 4.2, 6, 6.0, 10, 33, 41, 97]
 ```
 
-> 
 If you have a `dict` (or more precisely a `Mapping`), the `arg*` functions take `keys` as indices:
 
 ```python
@@ -55,7 +54,7 @@ If you have a `dict` (or more precisely a `Mapping`), the `arg*` functions take 
 
 ## Scorer
 
-Dict subclass for scoring hashable items. Generalizes functionality of built-in `Counter` to to floating-point numbers with full math operation support.
+Dict subclass for scoring hashable items. Generalizes functionality of built-in `Counter` to floating-point numbers with full math operation support.
 
 ```python
 >>> from izy import Scorer
@@ -68,8 +67,8 @@ Scorer({c: 5, d: 3, b: 2, a: 1})
 >>> s2
 Scorer({c: 4, b: 3, a: -2})
 ```
+
 Mathematical operators (`+`, `-`, `*`, `/`, `//`, `%`, `**`) are supported for both `Scorer` and scalar right-hand operands. 
-  
 ```python
 >>> s1 + s2         
 Scorer({c: 9, b: 5, d: 3, a: -1})  
@@ -141,12 +140,12 @@ def myfunction(x):
 @yields('a', 'a_doubled')
 def mygenerator(x):
     for i in range(x):
-        yield i, i*2
+        yield {'a':i, 'a_doubled': i*2}
 
 n = myfunction(5).plus_one
 ```
 
-`@returns_time()` calculates function runtime and returns it as a `datetime.timedelta` object. You can change time format to `milis` (`int`) or `seconds` (`float`). It returns a  `namedtuple` which you can rename with using `@returns`.
+`@returns_time()` calculates function runtime and returns it as a `datetime.timedelta` object. You can change time format to `milis` (`int`) or `seconds` (`float`). It returns a  `namedtuple` which you can rename using `@returns`.
 
 ```python
 @returns_time()
@@ -164,7 +163,7 @@ def timed_milis(x):
     return 'done'
 
 >>> timed(64)
-timed_output(result=None, time=datetime.timedelta(seconds=2, microseconds=530048))
+timed_output(output=None, time=datetime.timedelta(seconds=2, microseconds=530048))
 
 >>> timed_milis(32)
 timed_milis_output(output='done', milis=1289)
@@ -192,8 +191,7 @@ def please(x):
     print('ValueError')
 ```
 
-This one `@ignores()` exceptions you define (and returns `None`). Who knows when and why you need this? :) You can stack it on top of `@logs()` to be aware of ignored exceptions.  
-
+This one `@ignores()` given exceptions (and returns `None`). Who knows when and why you need this? :) You can stack it on top of `@logs()` to be aware of ignored exceptions.  
 ```python
 @ignores(ValueError, IndexError)
 @logs()
