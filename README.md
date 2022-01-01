@@ -1,6 +1,8 @@
 # izy
 Python functions and classes that make it even *easier*! You will wonder why these are not already built-in in python! :)
 
+> You can skip README and follow (and run) its equivalent [demo notebook](https://colab.research.google.com/github/tabasy/izy/blob/main/notebooks/demo_notebook.ipynb).
+
 The sooner you `pip install izy`, the less time you waste! Just 3 keystrokes to install and import :)
 
 ```bash
@@ -54,7 +56,7 @@ If you have a `dict` (or more precisely a `Mapping`), the `arg*` functions take 
 
 ## Scorer
 
-Dict subclass for scoring hashable items. Generalizes functionality of built-in `Counter` to floating-point numbers with full math operation support.
+The `Scorer` is a `dict` subclass for scoring hashable items. It generalizes functionality of built-in `Counter` to floating-point numbers with full math operation support.
 
 ```python
 >>> from izy import Scorer
