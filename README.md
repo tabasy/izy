@@ -1,5 +1,5 @@
 # izy
-Python functions and classes that make python even *easier* than it is! You will wonder why these are not already built-in in python! :)
+Python functions and classes that make it even *easier*! You will wonder why these are not already built-in in python! :)
 
 The sooner you `pip install izy`, the less time you waste! Just 3 keystrokes to install and import :)
 
