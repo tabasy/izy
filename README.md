@@ -1,7 +1,7 @@
 # izy
 Python functions and classes that make it even *easier*! You will wonder why these are not already built-in in python! :)
 
-> You can skip README and follow (and run) its equivalent [demo notebook](https://colab.research.google.com/github/tabasy/izy/blob/main/notebooks/demo_notebook.ipynb).
+> You can skip README and follow (and run) its equivalent [demo notebook](https://colab.research.google.com/github/tabasy/izy/blob/main/notebooks/demo.ipynb).
 
 The sooner you `pip install izy`, the less time you waste! Just 3 keystrokes to install and import :)
 
