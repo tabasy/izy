@@ -16,7 +16,7 @@ def returns(*field_names, type_name=None, **name2description):
         output_field_names = field_names + tuple(name2description.keys())
         FuncOutput = namedtuple(output_type_name, output_field_names)
 
-        doc = f.__doc__ + '\n' if len(f.__doc__) > 0 else ''
+        doc = f.__doc__ + '\n' if f.__doc__ else ''
         doc += 'Returns:\n'
         for name in field_names:
             doc += f'\t{name}\n'
@@ -45,7 +45,7 @@ def yields(*field_names, type_name=None, **name2description):
         output_field_names = field_names + tuple(name2description.keys())
         FuncOutput = namedtuple(output_type_name, output_field_names)
 
-        doc = f.__doc__ + '\n' if len(f.__doc__) > 0 else ''
+        doc = f.__doc__ + '\n' if f.__doc__ else ''
         doc += 'Yields:\n'
         for name in field_names:
             doc += f'\t{name}\n'
