@@ -10,37 +10,48 @@ from datetime import datetime
 __all__ = ['returns', 'yields', 'fix_this', 'ignores', 'fallsback', 'returns_time', 'logs']
 
 
-def returns(*field_names, type_name=None):
+def returns(*field_names, type_name=None, **name2description):
     def decorator(f):
-        if type_name is None:
-            # print(f.__name__, list(field_names))
-            FuncOutput = namedtuple(f.__name__ + '_output', field_names)
-        else:
-            FuncOutput = namedtuple(type_name, field_names)
+        output_type_name = type_name or f.__name__ + '_output'
+        output_field_names = field_names + tuple(name2description.keys())
+        FuncOutput = namedtuple(output_type_name, output_field_names)
 
-        # type_name = type_name or f.__name__
+        doc = f.__doc__ + '\n' if len(f.__doc__) > 0 else ''
+        doc += 'Returns:\n'
+        for name in field_names:
+            doc += f'\t{name}\n'
+        for name in name2description:
+            doc += f'\t{name}: {name2description[name]}\n'
+        f.__doc__ = doc
 
         @functools.wraps(f)
         def wrapper(*args, **kw):
-            result = f(*args, **kw)
-            if isinstance(result, Mapping):
-                return FuncOutput(**result)
-            elif isinstance(result, tuple):
-                return FuncOutput(*result)
+            output = f(*args, **kw)
+            if isinstance(output, Mapping) and set(output.keys()) == set(field_names):
+                return FuncOutput(**output)
+            elif isinstance(output, tuple):
+                return FuncOutput(*output)
             else:
-                return FuncOutput(result)
+                return FuncOutput(output)
         
         return wrapper
     return decorator
 
 
-def yields(*field_names, type_name=None):
+def yields(*field_names, type_name=None, **name2description):
+
     def decorator(f):
-        if type_name is None:
-            # print(f.__name__, list(field_names))
-            FuncOutput = namedtuple(f.__name__ + '_output', field_names)
-        else:
-            FuncOutput = namedtuple(type_name, field_names)
+        output_type_name = type_name or f.__name__ + '_output'
+        output_field_names = field_names + tuple(name2description.keys())
+        FuncOutput = namedtuple(output_type_name, output_field_names)
+
+        doc = f.__doc__ + '\n' if len(f.__doc__) > 0 else ''
+        doc += 'Yields:\n'
+        for name in field_names:
+            doc += f'\t{name}\n'
+        for name in name2description:
+            doc += f'\t{name}: {name2description[name]}\n'
+        f.__doc__ = doc
 
         @functools.wraps(f)
         def wrapper(*args, **kw):
@@ -51,44 +62,63 @@ def yields(*field_names, type_name=None):
                     yield FuncOutput(*item)
                 else:
                     yield FuncOutput(item)
-        
+
         return wrapper
     return decorator
 
 
-def _setup_logger(name, log_file=None, mode='w'):
+# def example(*args, comment=None, **kwargs):
+
+#     def decorator(f):
+#         output = f(*args, **kwargs)
+#         f.__doc__ = f.__doc__ or ''
+#         f.__doc__ += f'\n>>> {f.__name__}({repr_signature(*args, **kwargs)})'
+#         if comment:
+#             f.__doc__ += f'\t# {comment}'
+#         f.__doc__ += f'\n{output!r}\n'
+
+#         return f
+#     return decorator
+
+
+def repr_signature(*args, **kwargs):
+    args_repr = [repr(a) for a in args]
+    kwargs_repr = [f'{k}={v!r}' for k, v in kwargs.items()]
+    return ', '.join(args_repr + kwargs_repr)
+
+
+def repr_call(func, *args, **kwargs):
+    return f'{func.__name__}({repr_signature(*args, **kwargs)})'
+
+
+def setup_logger(base=None, name=None, log_file=None, mode='w'):
     formatter = logging.Formatter(fmt='[{asctime}][{name}][{levelname}] - {message}',
                                   datefmt='%Y-%m-%d %H:%M:%S', style='{')
-    logger = logging.getLogger(name)
+    logger = base or logging.getLogger(name)
     if log_file:
         file_handler = logging.FileHandler(log_file, mode=mode)
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
-    screen_handler = logging.StreamHandler(stream=sys.stdout)
-    screen_handler.setFormatter(formatter)
-    logger.addHandler(screen_handler)
+    if base is None:
+        screen_handler = logging.StreamHandler(stream=sys.stdout)
+        screen_handler.setFormatter(formatter)
+        logger.addHandler(screen_handler)
     return logger
 
-# https://ankitbko.github.io/blog/2021/04/logging-in-python/
-def logs(logger=None, to_file=None, file_mode='w',
+
+# inspired by https://ankitbko.github.io/blog/2021/04/logging-in-python/
+def logs(logger=None, to_file=None, file_mode='a',
          before=logging.DEBUG, after=logging.DEBUG, exception=logging.ERROR):
     def decorator(f):
-        log_file = to_file 
-        logger_name = f.__name__
-        if isinstance(logger, str):
-            if logger.lower().endswith('.txt'):
-                log_file = logger
-            else:
-                logger_name = logger
-        mylogger = logger or _setup_logger(logger_name, log_file, mode=file_mode)
+        logger_name = logger if isinstance(logger, str) else f.__name__
+        mylogger = setup_logger(base=logger, name=logger_name, log_file=to_file, mode=file_mode)
 
         @functools.wraps(f)
         def wrapper(*args, **kw):
             t_before = datetime.now()
             if before:
-                args_repr = [repr(a) for a in args]
-                kwargs_repr = [f"{k}={v!r}" for k, v in kw.items()]
-                signature = ", ".join(args_repr + kwargs_repr)
+
+                signature = repr_signature(*args, **kw)
                 mylogger.log(before, f"Function `{f.__name__}` called with args: ({signature})")
             try:
                 result = f(*args, **kw)
