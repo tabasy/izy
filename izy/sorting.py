@@ -5,7 +5,7 @@ import heapq
 
 __all__ = ['ascending', 'descending', 'topk', 
            'argtopk', 'argsort', 'argsorted',
-           'argmin', 'argmax', 'reorder']
+           'argmin', 'argmax', 'reorder', 'ordered']
 
 Sortable = Union[Sequence, Mapping, AbstractSet]
 
