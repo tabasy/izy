@@ -10,9 +10,9 @@ from shutil import rmtree
 
 from setuptools import find_packages, setup, Command
 
-# Package meta-data.
+# Package meta-data
 NAME = 'izy'
-DESCRIPTION = 'Python functions and classes that make python even easier than it is!'
+DESCRIPTION = 'Python functions and classes that make it even easier!'
 URL = 'https://github.com/tabasy/izy'
 EMAIL = 'm.tabasy@gmail.com'
 AUTHOR = 'Mohsen Tabasi'
