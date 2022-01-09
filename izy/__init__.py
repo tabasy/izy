@@ -1,3 +1,4 @@
 from .scorer import Scorer
-from .decorator import *
+from .bidict import Bidict
+from .decorators import *
 from .sorting import *
