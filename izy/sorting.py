@@ -98,15 +98,15 @@ if __name__ == '__main__':
 
     # print(f'{reorder(mylist, argsort(mylist)) = }\n')
 
-    mydict = {'a': 1, 'b': 4, 'c': -1}
+    # mydict = {'a': 1, 'b': 4, 'c': -1}
 
-    print('\nfor dicts, keys are considered as indices:')
-    print(f'{mydict = }\n')
+    # print('\nfor dicts, keys are considered as indices:')
+    # print(f'{mydict = }\n')
     
-    print(f'{argmin(mydict) = }\n')
-    print(f'{argmax(mydict) = }\n')
-    print(f'{argsort(mydict) = }\n')
-    print(f'{reorder(mydict, argsort(mydict)) = }')
-    print(f'{reorder(mydict, argsort(mydict)) = }')
-    print(f'{ordered(mydict) = }')
-    print(f'{ordered(mydict, by_keys=True) = }')
+    # print(f'{argmin(mydict) = }\n')
+    # print(f'{argmax(mydict) = }\n')
+    # print(f'{argsort(mydict) = }\n')
+    # print(f'{reorder(mydict, argsort(mydict)) = }')
+    # print(f'{reorder(mydict, argsort(mydict)) = }')
+    # print(f'{ordered(mydict) = }')
+    # print(f'{ordered(mydict, by_keys=True) = }')
