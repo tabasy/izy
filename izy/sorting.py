@@ -9,12 +9,6 @@ __all__ = ['ascending', 'descending', 'topk',
 
 Sortable = Union[Sequence, Mapping, AbstractSet]
 
-def ascending(x):
-    return sorted(x, reverse=False)
-
-def descending(x):
-    return sorted(x, reverse=True)
-
 def topk(x: Sortable, k, reverse=False, key=None):
     if reverse or k < 0:
         return heapq.nsmallest(abs(k), x, key=key)
@@ -75,6 +69,13 @@ def ordered(x: Sortable, by_keys=False, reverse=False):
             return tuple(sorted_x)
     else:
         raise NotImplementedError
+
+def ascending(x):
+    return ordered(x, reverse=False)
+
+def descending(x):
+    return ordered(x, reverse=True)
+
 
 if __name__ == '__main__':
 
