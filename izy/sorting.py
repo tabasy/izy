@@ -70,11 +70,11 @@ def ordered(x: Sortable, by_keys=False, reverse=False):
     else:
         raise NotImplementedError
 
-def ascending(x):
-    return ordered(x, reverse=False)
+def ascending(x, by_keys=False):
+    return ordered(x, by_keys=by_keys, reverse=False)
 
-def descending(x):
-    return ordered(x, reverse=True)
+def descending(x, by_keys=False):
+    return ordered(x, by_keys=by_keys, reverse=True)
 
 
 if __name__ == '__main__':
