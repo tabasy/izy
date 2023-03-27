@@ -1,5 +1,4 @@
-import re
-from typing import Iterable, List, Mapping, MutableMapping, MutableSequence, Sequence
+from typing import  Mapping, MutableSequence, Sequence
 
 
 class Boundict(dict):
@@ -74,7 +73,6 @@ class Bidict(Boundict):
 
     >>> bd.word[1]          # == bd.r[1] == bd.id2word[1]
     'salam'
-
     """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__()
@@ -153,43 +151,7 @@ class Bidict(Boundict):
 
 
 if __name__ == '__main__':
-    print('\n------------ Bidict ------------')
     
-    # print(f"{Bidict() = }")
-    # print(f"{Bidict('word', 'id') = }")
-    # print(f"{Bidict('word-id') = }")
-    # print(f"{Bidict({'salam':0, 'aziam':1, 'khoobi':2}) = }")
-    # print(f"{Bidict(salam=0, aziam=1, khoobi=2) = }")
-    # print(f"{Bidict([('salam', 0), ('azizam', 1), ('khoobi', 2)]) = }")
-    # print(f"{Bidict(word=['salam', 'azizam', 'khoobi'], id=[0, 1, 2]) = }\n")
+    import doctest
+    doctest.testmod(verbose=False)
     
-    # bd = Bidict(word=['salam', 'azizam', 'khoobi'], id=[0, 1, 2])
-    # bd.id['salaam'] = 0
-    # print(">>> bd.id['salaam'] = 0")
-    # # bd.word[1] = 'azizam'
-    # # bd.word[-1] = '<unk>'
-    # print(f'{bd = }')
-    # print(f'{bd.d = }')
-    # print(f'{bd.r = }')
-    
-    # bd.id[1] = 'khoobi?'
-    # print(f'{bd = }')
-    # print(f'{bd.id2word = }')
-    # print(f'{bd.word = }')
-
-    # print(exec_doc(Bidict.__doc__))
-
-    # print('\n------------ Redict ------------')
-    # rd = Redict()
-    # rd['salaam'] = 0
-    # rd[1] = 'azizam'
-    # rd[-1] = '<unk>'
-    # print(f'{rd = }')
-    # print(f'{rd[1] = }')
-    # print(f'{rd["azizam"] = }')
-    
-    # rd[1] = 'khoobi?'
-    # print(f'{rd = }')
-    
-    # del rd['khoobi?']
-    # print(f'{rd = }')
