@@ -3,7 +3,8 @@ test_dir/
 *.csv
 *.txt
 MANIFEST.in
-
+*.ipynb
+!*/demo.ipynb
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
