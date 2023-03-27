@@ -17,10 +17,10 @@ class Scorer(dict):
     >>> s2
     Scorer({c: 4, b: 3, a: -2})
 
-    >>> s1 + s2         # binary mathematical operators: +, -, *, /, //, %, **
-    Scorer({c: 9, b: 5, d: 3, a: -1})  
     # to support partial add, etc. we carry non-common items from the first scorer unchanged,
     # but those from the second operand are ignored.
+    >>> s1 + s2         # binary mathematical operators: +, -, *, /, //, %, **
+    Scorer({c: 9, b: 5, d: 3, a: -1})
 
     >>> s1 / 4          # mathematical operators apply to scalar values
     Scorer({c: 1.25, d: 0.75, b: 0.5, a: 0.25})
@@ -31,10 +31,10 @@ class Scorer(dict):
     >>> s1 & 2          # drops items with score less than 2
     Scorer({c: 5, d: 3, b: 2})
 
-    >>> s1 | s2         # ~ max (also aplicable to scalars)
-    Scorer({c: 5, b: 3, d: 3, a: 1})
     # ss = (s1 | (s1 & s2)) gives the subset of s1 which also exists in s2
     # you can use this to force math operations to return common items only
+    >>> s1 | s2         # ~ max (also aplicable to scalars)
+    Scorer({c: 5, b: 3, d: 3, a: 1})
 
     >>> abs(s2)         # overriden functions: abs(), round()
     Scorer({c: 4, b: 3, a: 2})
@@ -47,9 +47,7 @@ class Scorer(dict):
     '''
 
     def __init__(self, *args, missing_value=0, **kwds):
-        '''Create a new, empty Scorer object.  And if given, count elements
-        from an input iterable. Or, initialize the count from another mapping
-        of elements to their counts.
+        '''Initialize a Scorer object with optionally given values.
         '''
         self.missing_value = missing_value
         if len(args) > 2:
@@ -60,27 +58,25 @@ class Scorer(dict):
     def __missing__(self, key):
         return self.missing_value
 
-    def topk(self, k):
-        return self.best(k)
-
     def bottomk(self, k):
         if k in [None, 0, float('inf')]:
-            return self.best(float('-inf'))
-        return self.best(-k)
+            return self.topk(float('-inf'))
+        return self.topk(-k)
 
     def middlek(self, k):
         raise NotImplementedError
 
-    def worst(self, n=1):
-        if n in [None, 0, float('inf')]:
-            return self.best(float('-inf'))
-        return self.best(-n)
+    def best(self):
+        return max(self.items(), key=op.itemgetter(1))
+    
+    def worst(self):
+        return min(self.items(), key=op.itemgetter(1))
 
     def ascending(self):
-        return self.best(float('-inf'))
+        return sorted(self.items(), key=op.itemgetter(1), reverse=False)
 
     def descending(self):
-        return self.best(float('inf'))
+        return sorted(self.items(), key=op.itemgetter(1), reverse=True)
 
     def median(self):
         if len(self) == 0:
@@ -88,25 +84,20 @@ class Scorer(dict):
         med_idx = (len(self)+1) // 2
         return self.topk(med_idx + 1)[med_idx]
 
-    def best(self, n=1):
-        '''List the n best items and their scores.
-        If n is negative, then list n worst items.
-        elif n is None, zero or inf, then list all items starting from the best,
-        elif n is -inf, then list all items starting from the worst (but you are not supposed to do this),
-        elif n is +/-1, then return the best/worst item.
+    def topk(self, k=1):
+        '''List the top k items and their scores.
+        If k is negative, then list the bottom k worst items ~ `bottomk(abs(k))`.
+        elif k is None, zero or inf, then list all items starting from the top ~ `descending()`,
+        elif k is -inf, then list all items starting from the bottom ~ `ascending()`.
         '''
-        if n in [None, 0, float('inf')]:
-            return sorted(self.items(), key=op.itemgetter(1), reverse=True)
-        if n == float('-inf'):
-            return sorted(self.items(), key=op.itemgetter(1), reverse=False)
-        elif n == 1:
-            return max(self.items(), key=op.itemgetter(1))
-        elif n == -1:
-            return min(self.items(), key=op.itemgetter(1))
-        if n < 0:
-            return heapq.nsmallest(abs(n), self.items(), key=op.itemgetter(1))
+        if k in [None, 0, float('inf')]:
+            return self.descending()
+        if k == float('-inf'):
+            return self.ascending()
+        if k < 0:
+            return heapq.nsmallest(abs(k), self.items(), key=op.itemgetter(1))
         else:
-            return heapq.nlargest(n, self.items(), key=op.itemgetter(1))
+            return heapq.nlargest(k, self.items(), key=op.itemgetter(1))
 
     # Override dict methods where necessary
 
@@ -155,11 +146,11 @@ class Scorer(dict):
         max_num = 9
         space = ' '
         if len(self) <= max_num:
-            items = f',{space}'.join(map(lambda x: f'{x[0]}: {x[1]}', self.best(n=max_num)))
+            items = f',{space}'.join(map(lambda x: f'{x[0]}: {x[1]}', self.topk(k=max_num)))
         if len(self) > max_num:
-            top = f',{space}'.join(map(lambda x: f'{x[0]}: {x[1]}', self.best(n=max_num//2)))
+            top = f',{space}'.join(map(lambda x: f'{x[0]}: {x[1]}', self.topk(k=max_num//2)))
             median =  '{}: {}'.format(*self.median())
-            bottom = f',{space}'.join(map(lambda x: f'{x[0]}: {x[1]}', self.best(n=-(max_num//2))))
+            bottom = f',{space}'.join(map(lambda x: f'{x[0]}: {x[1]}', self.topk(k=-(max_num//2))))
             items = f'{top},{space}...,{space}{median},{space}..,{space}{bottom}'
         return f'{self.__class__.__name__}({{{items}}})'
 
@@ -250,38 +241,6 @@ class Scorer(dict):
 
 
 if __name__ == '__main__':
-
-    c = Scorer('abcd', [1, 2, 5, 3])
-    d = Scorer('abc', [-2, 3, 4])
-
-    # print(f'{c = }')
-    # print(f'{d = }\n')
-
-    # print(f'{c.median() = }')
-    # print(f'{c.best() = }')
-    # print(f'{c.best(0) = }')
-    # print(f'{c.best(3) = }')
-    # print(f'{c.best(-2) = }\n')
-
-    # print(f'{c * 2 = }')
-    # print(f'{c / 2 = }')
-    # print(f'{d - c = }')
-    # print(f'{d ** c = }\n')
-
-    # print(f'{c & d = }')
-    # print(f'{c | d = }\n')
-    # print(f'{c & 2 = }')
-    # print(f'{c | 2 = }\n')
-
-    # print(f'{+c = }')  
-    # print(f'{-c = }')
-    # print(f'{c + 1 = }')
-    # print(f'{c - 2 = }')
-    # print(f'{c * 3 = }')
-    # print(f'{round(c / 4, 0) = }\n')
-
-    # print(c.best())
-    # print(c.topk(3))
-    # print(c.topk(-2))
-    # print(c.ascending())
-    # print(c.median())
+    
+    import doctest
+    doctest.testmod()
