@@ -10,7 +10,7 @@ The sooner you `pip install izy`, the less time you waste! Just 3 keystrokes to 
 ```bash
 pip install izy
 ```
-Now that you have it, here are the functionlities:
+Now that you have it, here are the functionalities:
 
 # Sorting
 
@@ -367,3 +367,218 @@ True
 1 a
 2 c
 ```
+
+# Regex
+
+Here are some functions to help you create complex regular expressions. These functions are especially useful for some *hard-to-remember* and *hard-to-read* pattern syntaxes, like lookahead, lookbehind patterns.
+
+```python
+p = make_regex(
+   following('then '),      # lookbehind
+   charset('a-z '), '+',
+   followed_by(r' end')     # lookahead
+)
+
+>>> p.pattern
+'(?<=then )[a-z ]+(?= end)'
+
+>>> p.search('if condition then do something end; etc')
+<re.Match object; span=(18, 30), match='do something'>
+
+p = make_regex(
+   any_of('ali', 'hossein', 'javad'),
+   '\s+',
+   grouped(any_of('goodarzi', 'sharafi'), name='family')
+)
+
+>>> p.pattern
+'(?:hossein|javad|ali)\s+(?P<family>(?:goodarzi|sharafi))'
+
+>>> match = p.search('his name is hossein sharafi.')
+>>> match
+<re.Match object; span=(12, 27), match='hossein sharafi'>
+
+>>> match.group('family')
+'sharafi'
+```
+
+# Head
+
+This simple function `head()` gives you a brief insight about the structure and contents of a possible large and nested python data object. The key use case is when you load a large `.json` file for the first time in a jupyter notebook.
+
+```python
+x = [
+   (1, 2, 3, 4),
+   {1: range(3), 2: range(2, 40, 2), 5: 6, 7: 8},
+   range(1000),
+   (7, 8, 9, 10),
+   *range(10)
+]
+
+>>> head(x)
+[(1, 2, 3), {1: (0, 1, 2), 2: (2, 4, 6), 5: 6, 7: 8}, (0, 1, 2)]
+
+>>> head(x, n=2, ellipsis=True)
+[(1, 2, ...), {1: (0, 1, ...), 2: (2, 4, ...), ...: ...}, ...]
+
+>>> print(phead(x))
+[ (1, 2, 3, ...),
+  {1: (0, 1, 2), 2: (2, 4, 6, ...), 5: 6, ...: ...},
+  (0, 1, 2, ...),
+  ...]
+
+>>> hprint(x, n=5, width=32, indent=4)
+[   (1, 2, 3, 4),
+    {   1: (0, 1, 2),
+        2: (   2,
+               4,
+               6,
+               8,
+               10,
+               ...),
+        5: 6,
+        7: 8},
+    (0, 1, 2, 3, 4, ...),
+    (7, 8, 9, 10),
+    0,
+    ...]
+```
+
+# Table
+
+If you have a small tabular data and you don't want to install `numpy`, `pandas` just to handle it, here is the thing for you. The `Table` is a simple pure-python container for tabular data:
+
+```python
+# create table using dict of lists (columns)
+data = {
+   'a': [3, 5, 21638540, 'very-loong-value'],
+   'b': [16, 8, 0, 1],
+   'c': [0, 5, 6, None],
+   }
+table = Table(data)
+
+>>> print(table.draw())
+a               b    c      
+============================
+3               16   0      
+5               8    5      
+21638540        0    6      
+very-loong-va.. 1    None
+
+# ... or a list of dicts (rows)
+data = [
+   {'a': 3, 'b': 16, 'c': 0},
+   {'a': 5, 'b': 8, 'c': 5},
+   {'a': 21638540, 'b': 0, 'c': 6},
+   {'b': 1, 'a': 'very-loong-value'},
+   ]
+table = Table(data)
+
+>>> print(table.draw())
+a               b    c      
+============================
+3               16   0      
+5               8    5      
+21638540        0    6      
+very-loong-va.. 1    None
+```
+
+You can easily access columns, rows, or a slice of the table:
+
+```python
+>>> table['b']      # access table columns (by str key)
+[16, 8, 0, 1]
+
+>>> table[2]        # access table rows (by int key)
+{'a': 21638540, 'b': 0, 'c': 6}
+
+>>> table[1:3]      # or get a slice of table
+a          b   c   
+===================
+5          8   5   
+21638540   0   6
+```
+Concatenate tables:
+```python
+>>> table[:2] + table[2:]
+a               b    c      
+============================
+3               16   0      
+5               8    5      
+21638540        0    6      
+very-loong-va.. 1    None
+```
+And manipulate table data:
+```python
+# add/change a column
+>>> table['d'] = [0] * len(table)
+>>> table
+a               b    c      d   
+================================
+3               16   0      0   
+5               8    5      0   
+21638540        0    6      0   
+very-loong-va.. 1    None   0
+
+# manipulate table rows
+>>> table[1] = {'a': 5, 'b': 55, 'c': 555}
+>>> table.append({'b': 66, 'c': 666})
+>>> table
+a               b    c      d      
+===================================
+3               16   0      0      
+5               55   555    None   
+21638540        0    6      0      
+very-loong-va.. 1    None   0      
+None            66   666    None
+```
+
+`csv` read/write is alse there:
+```python
+>>> table.to_csv('output.tsv')
+>>> Table.from_csv('output.tsv')
+a               b    c      d      
+===================================
+3               16   0      0      
+5               55   555    None   
+21638540        0    6      0      
+very-loong-va.. 1    None   0      
+None            66   666    None
+```
+
+# Path
+
+Yet another `path` operations toolkit along with `pathlib`, `path.py`. This one is based on the standard `pathlib` and shares most of advantages of `path.py`. What makes it different is the convenient *method-chaining* api, and its file read/write methods.
+
+```python
+d = Path('path/to').mkdir()
+p = (d / 'file').with_suffix('.txt').touch()
+
+>>> p.copy(d / 'copy.txt').name
+'copy.txt'
+
+>>> len(d.glob('*.txt'))
+2
+>>> d.parent.rmdir(recursive=True).exists()
+False
+```
+
+`FilePath` is a `Path` which handles some file read/write operations which are not relevant to a Path.
+
+```python
+f = FilePath('path/to', 'file.txt')
+
+>>> f.mkdir().write_text('hello world!').read_text()
+'hello world!'
+
+>>> f.print({'x': 4, 'y':5}).aprint({'x': 6, 'y':7}).get_size()
+36
+
+>>> print(f.read_text())
+{'x': 4, 'y': 5}
+{'x': 6, 'y': 7}
+
+>>> f.pickle({'x': 4, 'y': 5}).pickle({'x': 6, 'y': 7}, append=True).unpickle()
+[{'x': 4, 'y': 5}, {'x': 6, 'y': 7}]
+```
+Read/write operations for `json` and `csv` (using `izy.Table`) are also available.
