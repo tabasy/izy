@@ -2,6 +2,7 @@
 test_dir/
 *.csv
 *.txt
+!*/requirements.txt
 MANIFEST.in
 *.ipynb
 !*/demo.ipynb
